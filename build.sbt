@@ -7,6 +7,7 @@ ThisBuild / organization := "apien"
 lazy val root = (project in file("."))
   .settings(
     name := "bash-crawler",
+    libraryDependencies += pureConfig,
     libraryDependencies += scalaTest % Test
   )
 
