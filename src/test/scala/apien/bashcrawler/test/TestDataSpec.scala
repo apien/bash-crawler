@@ -1,9 +1,10 @@
 package apien.bashcrawler.test
-import apien.bashcrawler.domain.Html
+import apien.bashcrawler.domain.Message.{Content, Id, Points}
+import apien.bashcrawler.domain.{Html, Message}
 
-trait TestDataSpec {
-	val messageHtml = Html(
-	  """
+trait TestDataSpec extends BaseSpec {
+  val messageHtml = Html(
+    """
 		  |<div id="content" class="">
 		  |		<div id="d4862636" class="q post">
 		  |			<div class="bar">
@@ -21,10 +22,10 @@ trait TestDataSpec {
 		  |			</div>
 		  |		</div>
 		  |""".stripMargin
-	)
+  )
 
   val messageHtmlWithoutId = Html(
-	  """
+    """
 		|<div id="content" class="">
 		|		<div id="d4862636" class="q post">
 		|			<div class="bar">
@@ -43,5 +44,6 @@ trait TestDataSpec {
 		|""".stripMargin
   )
 
-
+  def buildMessage(id: Id = Id(1L), points: Points = Points(11), content: Content = Content("Message Content 1")): Message =
+    Message(id, points, content)
 }
