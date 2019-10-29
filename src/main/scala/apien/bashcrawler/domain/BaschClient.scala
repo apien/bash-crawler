@@ -1,9 +1,9 @@
 package apien.bashcrawler.domain
-import apien.bashcrawler.domain.BatchClient.FailedFetchMessagesException
+import apien.bashcrawler.domain.BaschClient.FailedFetchMessagesException
 
 import scala.concurrent.Future
 
-trait BatchClient {
+trait BaschClient {
 
   /**
 	* Fetch given page from the bash.
@@ -15,7 +15,7 @@ trait BatchClient {
   def getMessages(number: PageNumber): Future[List[Message]]
 }
 
-object BatchClient {
+object BaschClient {
 
   case class FailedFetchMessagesException(pageNumber: PageNumber, message: String) extends RuntimeException(message)
 }

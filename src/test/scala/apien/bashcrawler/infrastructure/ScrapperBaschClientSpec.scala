@@ -3,7 +3,8 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.testkit.TestKit
-import apien.bashcrawler.domain.{BatchClient, Message, PageNumber}
+import apien.bashcrawler.domain.BaschClient.FailedFetchMessagesException
+import apien.bashcrawler.domain.{Message, PageNumber}
 import apien.bashcrawler.test.{BaseSpec, TestDataSpec}
 import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.concurrent.ScalaFutures
@@ -13,7 +14,7 @@ import org.scalatest.{FlatSpecLike, Matchers}
 import scala.collection.mutable
 import scala.concurrent.Future
 
-class ScrapperBatchClientSpec
+class ScrapperBaschClientSpec
     extends TestKit(ActorSystem("MySpec"))
     with FlatSpecLike
     with Matchers
@@ -66,13 +67,13 @@ class ScrapperBatchClientSpec
     val client = buildClient((_: HttpRequest) => Future.successful(responseQueue.dequeue()))
 
     whenReady(client.getMessages(PageNumber(1)).failed, featureTimeout) { error =>
-      error shouldBe a[BatchClient.FailedFetchMessagesException]
+      error shouldBe a[FailedFetchMessagesException]
     }
   }
 
-  private def buildClient(response: HttpResponse): ScrapperBatchClient =
+  private def buildClient(response: HttpResponse): ScrapperBaschClient =
     buildClient((_: HttpRequest) => Future.successful(response))
 
-  private def buildClient(httpClient: HttpRequest => Future[HttpResponse]): ScrapperBatchClient =
-    new ScrapperBatchClient("http://bash.org.pl", httpClient)
+  private def buildClient(httpClient: HttpRequest => Future[HttpResponse]): ScrapperBaschClient =
+    new ScrapperBaschClient("http://bash.org.pl", httpClient)
 }

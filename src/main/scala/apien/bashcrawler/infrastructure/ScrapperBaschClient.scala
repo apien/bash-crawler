@@ -4,6 +4,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshaller
 import akka.stream.Materializer
 import akka.stream.scaladsl.{RestartSource, Sink, Source}
+import apien.bashcrawler.domain.BaschClient.FailedFetchMessagesException
 import apien.bashcrawler.domain._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,18 +15,18 @@ import scala.util.control.NonFatal
 //TODO user refined or other type not just plain String for url
 
 /**
-  *  Implementation of [[BatchClient]] based on scrapping. We parse html content of the page.
+  *  Implementation of [[BaschClient]] based on scrapping. We parse html content of the page.
   * @param baseBashUrl Base url to bash, without '/' at the end.
   * @param httpClient Http client to make a http request.
   * @param actorSystem Actor system
   * @param materializer Materializer.
   * @param messageParser Parser to extract [[Message]] from a html content.
   */
-class ScrapperBatchClient(baseBashUrl: String, httpClient: HttpRequest => Future[HttpResponse])(
+class ScrapperBaschClient(baseBashUrl: String, httpClient: HttpRequest => Future[HttpResponse])(
     implicit actorSystem: ActorSystem,
     materializer: Materializer,
     messageParser: HtmlExtractor[Message]
-) extends BatchClient {
+) extends BaschClient {
 
   override def getMessages(pageNumber: PageNumber): Future[List[Message]] = {
     fetchPage(pageNumber).map { pageHtml =>
@@ -55,7 +56,8 @@ class ScrapperBatchClient(baseBashUrl: String, httpClient: HttpRequest => Future
       }
       .runWith(Sink.head)
       .recover {
-        case NonFatal(exception: Exception) => throw BatchClient.FailedFetchMessagesException(pageNumber, exception.getMessage)
+        case NonFatal(exception: Exception) =>
+          throw FailedFetchMessagesException(pageNumber, exception.getMessage)
       }
   }
 

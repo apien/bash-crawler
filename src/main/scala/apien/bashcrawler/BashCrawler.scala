@@ -3,14 +3,15 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Sink, Source}
 import akka.stream.{ActorAttributes, ActorMaterializer, Supervision}
 import apien.bashcrawler.BashCrawler.Statistics
-import apien.bashcrawler.domain.{BatchClient, Message, MessageRepository, PageNumber}
+import apien.bashcrawler.domain.BaschClient.FailedFetchMessagesException
+import apien.bashcrawler.domain.{BaschClient, Message, MessageRepository, PageNumber}
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class BashCrawler(
-    bashClient: BatchClient,
+    bashClient: BaschClient,
     messageRepository: MessageRepository
 )(implicit val actorSystem: ActorSystem, materializer: ActorMaterializer)
     extends LazyLogging {
@@ -39,8 +40,8 @@ class BashCrawler(
   }
 
   private val decider: Supervision.Decider = {
-    case _: BatchClient.FailedFetchMessagesException => Supervision.Resume
-    case _                                           => Supervision.Stop
+    case _: FailedFetchMessagesException => Supervision.Resume
+    case _                               => Supervision.Stop
   }
 }
 object BashCrawler {
