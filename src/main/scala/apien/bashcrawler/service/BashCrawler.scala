@@ -1,10 +1,11 @@
-package apien.bashcrawler
+package apien.bashcrawler.service
+
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Sink, Source}
 import akka.stream.{ActorAttributes, ActorMaterializer, Supervision}
-import apien.bashcrawler.BashCrawler.Statistics
 import apien.bashcrawler.domain.BaschClient.FailedFetchMessagesException
 import apien.bashcrawler.domain.{BaschClient, Message, MessageRepository, PageNumber}
+import apien.bashcrawler.service.BashCrawler.Statistics
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContext.Implicits.global
