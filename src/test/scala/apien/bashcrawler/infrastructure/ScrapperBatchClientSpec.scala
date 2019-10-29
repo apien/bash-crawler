@@ -5,7 +5,9 @@ import akka.stream.{ActorMaterializer, Materializer}
 import akka.testkit.TestKit
 import apien.bashcrawler.domain.{BatchClient, Message, PageNumber}
 import apien.bashcrawler.test.{BaseSpec, TestDataSpec}
+import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time.{Second, Span}
 import org.scalatest.{FlatSpecLike, Matchers}
 
 import scala.collection.mutable
@@ -20,6 +22,7 @@ class ScrapperBatchClientSpec
     with BaseSpec {
 
   private implicit val materializer: Materializer = ActorMaterializer()
+  private val featureTimeout = Timeout.apply(Span(1, Second))
 
   "ScrapperBatchClient.getMessages" should "return fetched message" in {
     val response = HttpResponse()
@@ -62,7 +65,7 @@ class ScrapperBatchClientSpec
     )
     val client = buildClient((_: HttpRequest) => Future.successful(responseQueue.dequeue()))
 
-    whenReady(client.getMessages(PageNumber(1)).failed) { error =>
+    whenReady(client.getMessages(PageNumber(1)).failed, featureTimeout) { error =>
       error shouldBe a[BatchClient.FailedFetchMessagesException]
     }
   }

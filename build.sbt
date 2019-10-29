@@ -13,6 +13,8 @@ lazy val root = (project in file("."))
     libraryDependencies += akkaHttp,
     libraryDependencies += akkaStream,
     libraryDependencies += akkHttpSprayJson,
+    libraryDependencies += scalaLogging,
+    libraryDependencies += logback,
     libraryDependencies += akkaTestKit % Test,
     libraryDependencies += scalaTest % Test,
   )
