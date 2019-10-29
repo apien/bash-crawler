@@ -23,8 +23,8 @@ object Main extends App with JsonSupport with LazyLogging {
   pageNumber.foreach(run)
 
   private def run(pageNumber: PageNumber): Unit = {
-    implicit val system: ActorSystem = ActorSystem("reactive-tweets")
-    implicit val materializer: ActorMaterializer = ActorMaterializer()
+    implicit val system: ActorSystem = ActorSystem("bash-crawler")
+    implicit val materializer: ActorMaterializer = ActorMaterializer()(system)
     val config = BCConfig.loadConfig
     val httpClient = (req: HttpRequest) => Http().singleRequest(req)
     val client = new ScrapperBaschClient(config.bashUrl, httpClient)
