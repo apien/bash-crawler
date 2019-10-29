@@ -35,7 +35,9 @@ object Main extends App with JsonSupport with LazyLogging {
       .process(pageNumber)
       .onComplete {
         case Success(Statistics(fetchedObjects)) =>
+          println("#########################################################")
           println(s"Successfully fetched $fetchedObjects messages from bash")
+          println("#########################################################")
           cleanResources()
         case Failure(exception) =>
           logger.error(s"Ups! Something gone wrong $exception")

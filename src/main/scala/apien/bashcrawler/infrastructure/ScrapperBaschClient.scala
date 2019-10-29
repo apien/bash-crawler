@@ -37,10 +37,10 @@ class ScrapperBaschClient(baseBashUrl: String, httpClient: HttpRequest => Future
   private def fetchPage(pageNumber: PageNumber): Future[Html] = {
     RestartSource
       .withBackoff(
-        minBackoff = 100.milliseconds,
+        minBackoff = 3.second,
         maxBackoff = 10.seconds,
         randomFactor = 0.05,
-        maxRestarts = 2
+        maxRestarts = 2,
       ) { () =>
         val responseFuture: Future[HttpResponse] = httpClient(HttpRequest(uri = urlToPage(pageNumber)))
         Source

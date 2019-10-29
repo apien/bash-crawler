@@ -8,7 +8,7 @@ import apien.bashcrawler.domain.{Message, PageNumber}
 import apien.bashcrawler.test.{BaseSpec, TestDataSpec}
 import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.time.{Second, Span}
+import org.scalatest.time.{Second, Seconds, Span}
 import org.scalatest.{FlatSpecLike, Matchers}
 
 import scala.collection.mutable
@@ -23,7 +23,7 @@ class ScrapperBaschClientSpec
     with BaseSpec {
 
   private implicit val materializer: Materializer = ActorMaterializer()
-  private val featureTimeout = Timeout.apply(Span(1, Second))
+  private val featureTimeout = Timeout.apply(Span(10, Seconds))
 
   "ScrapperBatchClient.getMessages" should "return fetched message" in {
     val response = HttpResponse()
@@ -54,7 +54,7 @@ class ScrapperBaschClientSpec
     )
     val client = buildClient((_: HttpRequest) => Future.successful(responseQueue.dequeue()))
 
-    client.getMessages(PageNumber(1)).futureValue should equal(
+    client.getMessages(PageNumber(1)).futureValue(featureTimeout) should equal(
       List(Message(4862636L, -169, "It is content of the post."))
     )
   }
